@@ -130,3 +130,9 @@ dmypy.json
 
 # PyCharm / IntelliJ files
 .idea
+
+# secrets / credentials
+*.secrets
+
+# data files
+*.csv
