@@ -49,7 +49,10 @@ def download_bars(client: StockHistoricalDataClient,
     logger.info(f"Downloaded bars for {len(bars.data.keys())} symbols")
     # save to CSV
     logger.info(f"Writing bars data to file: {csv_filename}")
-    bars.df.to_csv(csv_filename)
+    if len(bars.data) > 0:
+        bars.df.to_csv(csv_filename)
+    else:
+        logger.warning(f"No bars data downloaded!")
 
 
 def download_todays_bars(client: StockHistoricalDataClient,
@@ -73,7 +76,10 @@ def download_quotes(client: StockHistoricalDataClient,
     logger.info(f"Downloaded quotes for {len(quotes.data.keys())} symbols")
     # save to CSV
     logger.info(f"Writing quotes data to file: {csv_filename}")
-    quotes.df.to_csv(csv_filename)
+    if len(quotes.data) > 0:
+        quotes.df.to_csv(csv_filename)
+    else:
+        logger.warning(f"No quotes data downloaded!")
 
 
 def download_todays_quotes(client: StockHistoricalDataClient,
@@ -97,7 +103,10 @@ def download_trades(client: StockHistoricalDataClient,
     logger.info(f"Downloaded trades for {len(trades.data.keys())} symbols")
     # save to CSV
     logger.info(f"Writing trades data to file: {csv_filename}")
-    trades.df.to_csv(csv_filename)
+    if len(trades.data) > 0:
+        trades.df.to_csv(csv_filename)
+    else:
+        logger.warning(f"No trades data downloaded!")
 
 
 def download_todays_trades(client: StockHistoricalDataClient,
