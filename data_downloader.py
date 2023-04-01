@@ -1,9 +1,9 @@
+import argparse
 from datetime import datetime as dt
 import configparser
 import logging
 import os.path
-
-import pandas as pd
+import re
 
 from alpaca.data import StockHistoricalDataClient
 from alpaca.data.requests import StockBarsRequest, StockQuotesRequest, StockTradesRequest
@@ -110,29 +110,40 @@ def download_todays_trades(client: StockHistoricalDataClient,
 #
 # MAIN
 #
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Download financial market data using the Alpaca API')
+    parser.add_argument('--secrets',
+                        type=str,
+                        required=False,
+                        default='alpaca.secrets',
+                        help='Name of the JSON file containing the Alpaca API key and secret')
+    parser.add_argument('--symbols',
+                        type=str,
+                        required=True,
+                        help='Name of the text file containing the list of symbols to download data for')
+    parser.add_argument('--output_dir',
+                        type=str,
+                        required=False,
+                        default=os.getcwd(),
+                        help='Name of the directory where the downloaded data will be saved')
+    args = parser.parse_args()
 
-# params
-secrets_file_name = "alpaca.secrets"
-symbols_list = ['T',
-                'APA',
-                'BBBY',
-                'PTEN',
-                'X',
-                'BB',
-                'EQT']
-output_dir = os.getcwd()  # replace with path to folder for output
+    # params
+    secrets_file_name = args.secrets
+    symbols_list = re.split(r',\s*', args.symbols)
+    output_dir = args.output_dir
 
-# get API credentials
-credentials = parse_secrets(secrets_file_name)
+    # get API credentials
+    credentials = parse_secrets(secrets_file_name)
 
-# configure data API client
-client = StockHistoricalDataClient(credentials['key'], credentials['secret'])
+    # configure data API client
+    client = StockHistoricalDataClient(credentials['key'], credentials['secret'])
 
-# fetch bars data
-download_todays_bars(client, symbols_list)
+    # fetch bars data
+    download_todays_bars(client, symbols_list)
 
-# fetch quotes data
-download_todays_quotes(client, symbols_list)
+    # fetch quotes data
+    download_todays_quotes(client, symbols_list)
 
-# fetch trades data
-download_todays_trades(client, symbols_list)
+    # fetch trades data
+    download_todays_trades(client, symbols_list)
