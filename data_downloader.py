@@ -17,14 +17,32 @@ logger.setLevel(logging.INFO)
 
 
 def day_start_time(day: dt) -> dt:
+    '''
+    Returns the start time of the given day
+    :param day: the time for which the day start time is to be returned
+    :return: the start time of the given day
+    '''
     return day.replace(hour=0, minute=0, second=0, microsecond=0)
 
 
 def get_csv_outfile(basdir: str, prefix: str, filedate: dt) -> str:
+    '''
+    Builds a CSV file name
+    :param basdir: the base directory
+    :param prefix: the file name prefix
+    :param filedate: the file date
+    :return: the CSV file name
+    '''
     return os.path.join(basdir, f"{prefix}_{filedate.date()}.csv")
 
 
 def parse_secrets(secrets_file, config_section='DEFAULT'):
+    '''
+    Parses the given secrets file and returns the configuration parameters
+    :param secrets_file: the secrets file name
+    :param config_section: the configuration section to return
+    :return: the configuration parameters
+    '''
     config = configparser.ConfigParser()
     config.read(secrets_file_name)
     if config_section in config:
@@ -39,6 +57,15 @@ def download_bars(client: StockHistoricalDataClient,
                   end_time: dt,
                   csv_filename: str,
                   frequency: TimeFrameUnit = TimeFrameUnit.Minute) -> None:
+    '''
+    Downloads bars data for the given symbols and saves it to a CSV file
+    :param client: the Alpaca client
+    :param symbols: the list of symbols to download data for
+    :param start_time: the start time for the data download
+    :param end_time: the end time for the data download
+    :param csv_filename: the name of the CSV file to save the data to
+    :param frequency: the frequency of the bars data
+    '''
     # fetch bars data
     logger.info(f"Fetching bars data...")
     bars_request = StockBarsRequest(symbol_or_symbols=symbols,
@@ -60,6 +87,14 @@ def download_quotes(client: StockHistoricalDataClient,
                     start_time: dt,
                     end_time: dt,
                     csv_filename: str) -> None:
+    '''
+    Downloads quotes data for the given symbols and saves it to a CSV file
+    :param client: the Alpaca client
+    :param symbols: the list of symbols to download data for
+    :param start_time: the start time for the data download
+    :param end_time: the end time for the data download
+    :param csv_filename: the name of the CSV file to save the data to
+    '''
     # fetch quotes data
     logger.info(f"Fetching quotes data...")
     quotes_request = StockQuotesRequest(symbol_or_symbols=symbols,
@@ -80,6 +115,14 @@ def download_trades(client: StockHistoricalDataClient,
                     start_time: dt,
                     end_time: dt,
                     csv_filename: str) -> None:
+    '''
+    Downloads trades data for the given symbols and saves it to a CSV file
+    :param client: the Alpaca client
+    :param symbols: the list of symbols to download data for
+    :param start_time: the start time for the data download
+    :param end_time: the end time for the data download
+    :param csv_filename: the name of the CSV file to save the data to
+    '''
     # fetch trades data
     logger.info(f"Fetching trades data...")
     trades_request = StockTradesRequest(symbol_or_symbols=symbols,
