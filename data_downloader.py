@@ -55,13 +55,6 @@ def download_bars(client: StockHistoricalDataClient,
         logger.warning(f"No bars data downloaded!")
 
 
-def download_todays_bars(client: StockHistoricalDataClient,
-                         symbols: list[str]) -> None:
-    now = dt.now()
-    bars_outfile = get_csv_outfile(output_dir, "bars", now)
-    download_bars(client, symbols, day_start_time(now), now, bars_outfile)
-
-
 def download_quotes(client: StockHistoricalDataClient,
                     symbols: list[str],
                     start_time: dt,
@@ -80,13 +73,6 @@ def download_quotes(client: StockHistoricalDataClient,
         quotes.df.to_csv(csv_filename)
     else:
         logger.warning(f"No quotes data downloaded!")
-
-
-def download_todays_quotes(client: StockHistoricalDataClient,
-                           symbols: list[str]) -> None:
-    now = dt.now()
-    quotes_outfile = get_csv_outfile(output_dir, "quotes", now)
-    download_quotes(client, symbols, day_start_time(now), now, quotes_outfile)
 
 
 def download_trades(client: StockHistoricalDataClient,
@@ -109,13 +95,6 @@ def download_trades(client: StockHistoricalDataClient,
         logger.warning(f"No trades data downloaded!")
 
 
-def download_todays_trades(client: StockHistoricalDataClient,
-                           symbols: list[str]) -> None:
-    now = dt.now()
-    trades_outfile = get_csv_outfile(output_dir, "trades", now)
-    download_trades(client, symbols, day_start_time(now), now, trades_outfile)
-
-
 #
 # MAIN
 #
@@ -130,6 +109,16 @@ if __name__ == '__main__':
                         type=str,
                         required=True,
                         help='Name of the text file containing the list of symbols to download data for')
+    parser.add_argument('--start_time',
+                        type=dt.fromisoformat,
+                        required=False,
+                        default=day_start_time(dt.now()),
+                        help='Start time for the data download')
+    parser.add_argument('--end_time',
+                        type=dt.fromisoformat,
+                        required=False,
+                        default=dt.now(),
+                        help='End time for the data download')
     parser.add_argument('--output_dir',
                         type=str,
                         required=False,
@@ -140,6 +129,8 @@ if __name__ == '__main__':
     # params
     secrets_file_name = args.secrets
     symbols_list = re.split(r',\s*', args.symbols)
+    start_time = args.start_time
+    end_time = args.end_time
     output_dir = args.output_dir
 
     # get API credentials
@@ -149,10 +140,22 @@ if __name__ == '__main__':
     client = StockHistoricalDataClient(credentials['key'], credentials['secret'])
 
     # fetch bars data
-    download_todays_bars(client, symbols_list)
+    download_bars(client,
+                  symbols_list,
+                  start_time,
+                  end_time,
+                  get_csv_outfile(output_dir, "bars", start_time))
 
     # fetch quotes data
-    download_todays_quotes(client, symbols_list)
+    download_quotes(client,
+                    symbols_list,
+                    start_time,
+                    end_time,
+                    get_csv_outfile(output_dir, "quotes", start_time))
 
     # fetch trades data
-    download_todays_trades(client, symbols_list)
+    download_trades(client,
+                    symbols_list,
+                    start_time,
+                    end_time,
+                    get_csv_outfile(output_dir, "trades", start_time))
