@@ -1,8 +1,9 @@
 import argparse
-import configparser
 import logging
 import os.path
 from datetime import datetime as dt
+
+from shared import parse_secrets
 
 from alpaca.data import StockHistoricalDataClient
 from alpaca.data.requests import StockBarsRequest, StockQuotesRequest, StockTradesRequest
@@ -33,21 +34,6 @@ def get_csv_outfile(basdir: str, prefix: str, filedate: dt) -> str:
     :return: the CSV file name
     '''
     return os.path.join(basdir, f"{prefix}_{filedate.date()}.csv")
-
-
-def parse_secrets(secrets_file, config_section='DEFAULT'):
-    '''
-    Parses the given secrets file and returns the configuration parameters
-    :param secrets_file: the secrets file name
-    :param config_section: the configuration section to return
-    :return: the configuration parameters
-    '''
-    config = configparser.ConfigParser()
-    config.read(secrets_file_name)
-    if config_section in config:
-        return config[config_section]
-    else:
-        raise configparser.NoSectionError(f"Config section {config_section} not found in secrets file {secrets_file}!")
 
 
 def parse_symbols(symbols_file: str) -> list[str]:
