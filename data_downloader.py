@@ -1,9 +1,8 @@
 import argparse
-from datetime import datetime as dt
 import configparser
 import logging
 import os.path
-import re
+from datetime import datetime as dt
 
 from alpaca.data import StockHistoricalDataClient
 from alpaca.data.requests import StockBarsRequest, StockQuotesRequest, StockTradesRequest
@@ -49,6 +48,21 @@ def parse_secrets(secrets_file, config_section='DEFAULT'):
         return config[config_section]
     else:
         raise configparser.NoSectionError(f"Config section {config_section} not found in secrets file {secrets_file}!")
+
+
+def parse_symbols(symbols_file: str) -> list[str]:
+    '''
+    Parses the given symbols file and returns the list of symbols
+    :param symbols_file: the symbols file name
+    :return: the list of symbols
+    '''
+    symbols = []
+    with open(symbols_file, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if len(line) > 0:
+                symbols.append(line)
+    return symbols
 
 
 def download_bars(client: StockHistoricalDataClient,
@@ -150,7 +164,8 @@ if __name__ == '__main__':
                         help='Name of the JSON file containing the Alpaca API key and secret')
     parser.add_argument('--symbols',
                         type=str,
-                        required=True,
+                        required=False,
+                        default='symbols.txt',
                         help='Name of the text file containing the list of symbols to download data for')
     parser.add_argument('--start_time',
                         type=dt.fromisoformat,
@@ -171,13 +186,16 @@ if __name__ == '__main__':
 
     # params
     secrets_file_name = args.secrets
-    symbols_list = re.split(r',\s*', args.symbols)
+    symbols_file_name = args.symbols
     start_time = args.start_time
     end_time = args.end_time
     output_dir = args.output_dir
 
     # get API credentials
     credentials = parse_secrets(secrets_file_name)
+
+    # get symbols list
+    symbols_list = parse_symbols(symbols_file_name)
 
     # configure data API client
     client = StockHistoricalDataClient(credentials['key'], credentials['secret'])

@@ -29,14 +29,14 @@ Replace `<your API key ID>` and `<your API secret key>` with your actual API key
 To run the script, use the following command:
 ```commandline
 python data_downloader.py [--secrets <secrets file>] 
-                           --symbols "<symbol1>, <symbol2>, ... <symbolN>" 
+                          [--symbols <symbols file>] 
                           [--start_time <start time>] 
                           [--end_time <end time>]
                           [--output_dir <output directory>]
 ```
 The arguments are as follows:
 * `--secrets`: The path to the secrets file. If not specified, the script will look for a file named `alpaca.secrets` in the root of the repository.
-* `--symbols`: A comma-separated list of symbols to download data for.
+* `--symbols`: The path to the file containing the symbols to download data for. If not specified, the script will look for a file named `symbols.txt` in the root of the repository.
 * `--start_time`: The start time of the data to download. If not specified, the script will download data for the current day.
 * `--end_time`: The end time of the data to download. If not specified, the script will download data up to the current time.
 * `--output_dir`: The directory to save the downloaded data to. If not specified, the script will save the data to the `data` directory in the current working directory.
