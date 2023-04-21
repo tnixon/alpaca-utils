@@ -136,4 +136,4 @@ dmypy.json
 
 # data files
 *.csv
-*.list
+*.txt
